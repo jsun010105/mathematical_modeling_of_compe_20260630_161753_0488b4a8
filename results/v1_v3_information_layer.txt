@@ -1,0 +1,32 @@
+
+=== Fully redundant (S=R1=R2) ===
+  H(S)=1.000000  I(S;R)=1.000000
+  Ablate R1: dI1=0.000000  I(S;R1|R2)=0.000000  | identity err=0.00e+00
+  Ablate R2: dI2=0.000000  I(S;R2|R1)=0.000000  | identity err=0.00e+00
+  Fano (ablate R1): H(S|R2)=0.000000 <= H2(Pe)+Pe*log2(|S|-1)=0.000000  (Pe*=0.0000)  holds=True
+
+=== Unique in R1 (S=R1, R2 irrelevant) ===
+  H(S)=1.000000  I(S;R)=1.000000
+  Ablate R1: dI1=1.000000  I(S;R1|R2)=1.000000  | identity err=0.00e+00
+  Ablate R2: dI2=0.000000  I(S;R2|R1)=0.000000  | identity err=0.00e+00
+  Fano (ablate R1): H(S|R2)=1.000000 <= H2(Pe)+Pe*log2(|S|-1)=1.000000  (Pe*=0.5000)  holds=True
+
+=== Synergistic (S=R1 XOR R2) ===
+  H(S)=1.000000  I(S;R)=1.000000
+  Ablate R1: dI1=1.000000  I(S;R1|R2)=1.000000  | identity err=0.00e+00
+  Ablate R2: dI2=1.000000  I(S;R2|R1)=1.000000  | identity err=0.00e+00
+  Fano (ablate R1): H(S|R2)=1.000000 <= H2(Pe)+Pe*log2(|S|-1)=1.000000  (Pe*=0.5000)  holds=True
+
+=== Partial redundancy (eps=0.1) ===
+  H(S)=1.000000  I(S;R)=1.000000
+  Ablate R1: dI1=0.468996  I(S;R1|R2)=0.468996  | identity err=0.00e+00
+  Ablate R2: dI2=0.000000  I(S;R2|R1)=0.000000  | identity err=0.00e+00
+  Fano (ablate R1): H(S|R2)=0.468996 <= H2(Pe)+Pe*log2(|S|-1)=0.468996  (Pe*=0.1000)  holds=True
+
+=== V3: PID cross-check (dit, I_min / Williams-Beer) ===
+  redundant         : Rdn=1.000 Unq_R1=0.000 Unq_R2=0.000 Syn=0.000
+  xor               : Rdn=0.000 Unq_R1=0.000 Unq_R2=0.000 Syn=1.000
+  partial(eps=0.1)  : Rdn=0.531 Unq_R1=0.469 Unq_R2=0.000 Syn=0.000
+  (Interpretation: ablation loss of R1 = Unq_R1 + Syn; redundant atom is free.)
+
+ALL INFORMATION-LAYER CHECKS PASSED.

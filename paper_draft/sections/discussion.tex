@@ -1,0 +1,111 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{A unifying picture for contradictory reports}
+
+The central contribution of the framework is conceptual: a single computation carries
+two robustness numbers, the min-cut $R(G)$ that governs a targeted attacker and the
+percolation threshold $q_c$ that governs random damage, and Theorem~\ref{thm:c3} shows
+that these diverge as the redundancy width grows. The literature's contradictory
+findings then become statements about different threat models applied to the same
+circuit. Table~\ref{tab:reconcile} maps the principal empirical observations onto the
+framework.
+
+\begin{table}[ht]
+\centering
+\caption{The framework reads the field's contradictory findings as consistent
+statements about distinct robustness numbers of the same circuit.}
+\label{tab:reconcile}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{0.46\linewidth}p{0.46\linewidth}}
+\toprule
+\textbf{Empirical finding} & \textbf{Framework reading} \\
+\midrule
+Backup name-mover heads: ablating three heads drops the logit difference by
+$5\%$ \cite{wang2022ioi} &
+Large random robustness; surviving vertex-disjoint paths
+(Theorems~\ref{thm:c1}--\ref{thm:c2}). \\
+``Redundant paths survived ablation'' \cite{joad2026directions}; refusal cones of
+dimension $\le 5$ \cite{wollschlager2025cones} &
+$k$-redundancy with $R(G)>1$ (Theorems~\ref{thm:a2},~\ref{thm:c1}); latent and
+pre-existing (Proposition~\ref{prop:d1}). \\
+Self-repair restoring $\approx 70\%$ of the logit reduction \cite{mcgrath2023hydra} &
+The surviving pathways already held the information
+(Proposition~\ref{prop:d1}, Theorem~\ref{thm:a1}). \\
+Safety removable in $\approx 5$ steps \cite{qi2023finetuning}; shallow and
+first-token \cite{qi2024shallow} &
+Small effective $R(G)$, hence a tiny targeted budget
+(Corollary~\ref{cor:e1}). \\
+A single refusal direction \cite{arditi2024refusal} &
+The special case $R(G)=1$: the min-cut is the one direction
+(Example~\ref{ex:shallow}). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Relation to the compensatory effect}
+
+The logit-level compensatory effect of \cite{mcgrath2023hydra} is layer-granular and,
+as \cite{rushing2024selfrepair} document, roughly $30\%$ of it is a LayerNorm-scaling
+artifact rather than genuine rerouting. Theorem~\ref{thm:a1} replaces it with the exact
+identity $\Delta I_i=\II(S;R_i\mid R_{-i})$, which by construction discards the
+information $R_i$ shares with the other pathways and so carries no scaling artifact.
+The result is a head- or feature-level, mechanism-corrected measure of how much a
+pathway genuinely contributes that no other pathway can supply.
+
+\subsection{The size of the effect}
+
+The targeted-versus-random separation is not marginal. At depth $d=8$ and width
+$w=16$, a random adversary must delete about $110$ of the $128$ internal units---$86\%$
+of them---to match the damage a targeted adversary inflicts by removing the $16$
+min-cut vertices, $12.5\%$ of the network (Table~\ref{tab:c3}). This is a roughly
+sevenfold gap in raw count and a qualitative gap in fraction ($q_c=0.86$ against the
+targeted $1/d=0.125$). Redundancy buys a great deal of robustness against
+undirected damage and almost none against an adversary who attacks the cut.
+
+\subsection{Limitations}
+
+We state the framework's boundaries honestly.
+
+\begin{itemize}[leftmargin=*,itemsep=2pt,topsep=2pt]
+  \item \emph{Combinatorial idealization.} The graph model treats $S$ as computable
+    only if a path is fully intact. Real transformers are analog: sub-threshold
+    contributions along several partially damaged paths can sum past a decision
+    threshold, so the min-cut $R(G)$ can \emph{under}-state true robustness. The exact
+    survival law of Theorem~\ref{thm:c2} also assumes complete bipartite wiring between
+    bundles; sparser wiring changes the constants but not the qualitative transition.
+  \item \emph{Estimation on real models.} Computing $\Delta I_i=\II(S;R_i\mid R_{-i})$
+    requires estimating conditional mutual information in high dimensions, which is
+    hard and biased; the partial-information cross-check used here can over-report
+    redundancy. We did not instantiate the bounds on an actual LLM---this is a theory
+    plus synthetic-verification contribution, not an empirical measurement.
+  \item \emph{Fano gives a floor.} Theorem~\ref{thm:b1} lower-bounds the behavioral
+    error; it does not assert that the floor is achieved (it is tight when $S\mid
+    R_{T^c}$ is uniform on its support).
+  \item \emph{Static $R(G)$.} Corollary~\ref{cor:e1} bounds the budget to misalign at
+    a fixed network but does not model how $R(G)$ itself evolves under training.
+  \item \emph{Mapping behavior to a variable.} Real aligned behavior is not a single
+    discrete variable; the framework applies per chosen behavior $S$.
+\end{itemize}
+
+\subsection{Open questions}
+
+\begin{itemize}[leftmargin=*,itemsep=2pt,topsep=2pt]
+  \item \emph{Dynamics of $R(G)$ under training.} Determine conditions under which
+    adversarial or continued training grows the alignment min-cut rather than cutting
+    it. The capacity bound of \cite{hanni2024superposition} and the
+    abundance/scarcity regimes of \cite{bereska2025superposition} are candidate
+    predictors.
+  \item \emph{Analog-threshold percolation.} Replace ``path intact'' by ``summed
+    contribution exceeds a threshold $\theta$'' and derive the corresponding weighted
+    min-cut and flow threshold, lifting the combinatorial idealization.
+  \item \emph{Degeneracy beyond the single min-cut.} Port the networked-buffering and
+    degeneracy notions of \cite{whitacre2010degeneracy} to bound multi-pathway lesion
+    robustness by a graph quantity richer than the single min-cut.
+  \item \emph{Tight behavioral bounds.} Develop list-decoding analogues of
+    Theorem~\ref{thm:b1} for graded refusal behaviors and relate the decoder error
+    $P_e$ quantitatively to the output robustness $\rho$ for vector behaviors.
+  \item \emph{Estimator-robust ablation.} Design a redundancy-aware estimator of
+    $\Delta I_i$ that resists the underestimation of single-head ablation reported at
+    scale by \cite{frank2026routing}.
+\end{itemize}

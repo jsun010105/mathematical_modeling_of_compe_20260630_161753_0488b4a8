@@ -1,0 +1,93 @@
+\section{Introduction}
+\label{sec:intro}
+
+Whether the aligned behavior of a large language model (LLM) is encoded
+\emph{redundantly} decides whether safety survives quantization, pruning, benign
+fine-tuning, or adversarial attack. This is not a matter of taste: the same
+intervention that is harmless to a redundantly encoded behavior can be fatal to one
+that depends on a single internal component. Yet the empirical literature on the
+internal mechanisms of alignment is sharply, and at first sight irreconcilably,
+divided.
+
+On one side, alignment looks \emph{fragile and localized}. Fine-tuning on fewer than
+a hundred examples raises harmful-response rates from near zero to roughly
+$80$--$90\%$ in five to ten gradient steps \cite{qi2023finetuning}; the divergence
+between an aligned model and its base model is concentrated in the first few output
+tokens \cite{qi2024shallow}; and a single difference-in-means direction, when
+projected out, removes refusal across more than a dozen models \cite{arditi2024refusal}.
+On the other side, alignment looks \emph{distributed and robust}. Ablating all three
+primary name-mover heads of the indirect-object-identification circuit drops the
+relevant logit difference by only $5\%$, because dormant backup heads activate to
+compensate \cite{wang2022ioi}; refusal is mediated not by one direction but by
+polyhedral concept cones of dimension up to five \cite{wollschlager2025cones}; and a
+model can survive ablation of its principal safety direction because of ``a richer
+internal refusal structure with redundant paths that survived the ablation''
+\cite{joad2026directions}.
+
+\paragraph{The gap.}
+What is missing is a single quantitative account under which both regimes are special
+cases---a scalar (or a pair of scalars) that says \emph{which} kind of robustness a
+given aligned behavior has, and which it lacks. The canonical formal measure of
+compensation, McGrath et al.'s logit-level compensatory effect \cite{mcgrath2023hydra},
+is layer-granular and, as Rushing and Nanda show, roughly $30\%$ of it is a
+LayerNorm-scaling artifact rather than genuine rerouting \cite{rushing2024selfrepair}.
+No assumption-light bound currently links a redundancy measure to the
+\emph{behavioral} effect of an ablation, and no model places ``shallow/fragile'' and
+``distributed/redundant'' on one axis.
+
+\paragraph{Our contribution.}
+We supply such a framework, organized in three proved layers, each verified
+computationally.
+
+\begin{itemize}[leftmargin=*,itemsep=2pt,topsep=2pt]
+  \item \textbf{Information layer.} We prove that the information about an aligned
+    behavior $S$ lost by ablating a pathway $R_i$ is \emph{exactly} the conditional
+    mutual information $\II(S;R_i\mid R_{-i})$, the part of $R_i$'s information that no
+    other pathway carries (Theorem~\ref{thm:a1}). Fully redundant pathways cost zero.
+    This is an exact identity, free of the LayerNorm artifact that contaminates the
+    logit-level effect. A $k$-redundancy condition then guarantees resilience to any
+    $k-1$ simultaneous ablations (Theorem~\ref{thm:a2}).
+  \item \textbf{From information to behavior.} Through Fano's inequality, the
+    information loss lower-bounds the unavoidable behavioral error of \emph{any}
+    decoder reading the surviving pathways (Theorem~\ref{thm:b1}). Zero information
+    loss forces zero behavioral error: redundancy implies provable behavioral
+    robustness. Conversely, when behavior survives an ablation, the surviving pathways
+    must have already contained all the information---compensation \emph{reveals}
+    pre-existing redundancy rather than creating it (Proposition~\ref{prop:d1}).
+  \item \textbf{Graph layer and phase transition.} Modeling computation as a layered
+    directed acyclic graph, we show the \emph{targeted} critical ablation threshold
+    equals the minimum vertex cut $R(G)$ (Theorem~\ref{thm:c1}), via Menger's theorem.
+    Under random ablation, survival obeys the exact law $(1-q^w)^d$
+    (Theorem~\ref{thm:c2}), with a percolation phase transition whose critical point
+    $q_c=(1-2^{-1/d})^{1/w}\to 1$ and whose width shrinks as $1/w$
+    (Theorem~\ref{thm:c3}). The targeted and random thresholds are therefore
+    exponentially separated in the redundancy width.
+\end{itemize}
+
+The payoff is conceptual. A network carries \emph{two} robustness numbers: the
+min-cut $R(G)$ (targeted fragility) and the percolation threshold $q_c$ (random
+robustness), and Theorem~\ref{thm:c3} shows they diverge. The same aligned circuit is
+then simultaneously robust to random or incidental damage and fragile to a targeted
+attack on its min-cut. This reconciles the contradictory empirical reports and yields
+an honest verdict on the premise that alignment intrinsically resists removal: the
+premise holds in the random/benign regime but fails against a targeted adversary, who
+need only degrade $R(G)$ pathway-units to misalign the model
+(Corollary~\ref{cor:e1})---matching the easy targeted misalignment of
+\cite{qi2023finetuning,qi2024shallow}.
+
+\paragraph{Techniques.}
+The proofs use only standard, uncontested tools: the chain rule and non-negativity of
+(conditional) mutual information \cite{cover2006elements}, Fano's inequality
+\cite{cover2006elements}, Menger's theorem in its vertex form \cite{diestel2017graph},
+and exact percolation algebra on a series-parallel circuit. We deliberately base the
+main bounds on Shannon mutual information rather than a specific partial-information-decomposition
+operator, using the latter \cite{williams2010pid} only as an independent cross-check.
+
+\paragraph{Organization.}
+Section~\ref{sec:prelim} fixes notation, gives the definitions, and recalls the
+prerequisite theorems. Section~\ref{sec:results} states and proves the information-layer
+results (Section~\ref{sec:results}.1), the behavioral and structural corollaries
+(Section~\ref{sec:results}.2), and the graph-layer results and phase transition
+(Section~\ref{sec:results}.3), with worked examples and a computational-verification
+subsection. Section~\ref{sec:discussion} discusses implications, reconciles the
+literature, and lists open problems; Section~\ref{sec:conclusion} concludes.

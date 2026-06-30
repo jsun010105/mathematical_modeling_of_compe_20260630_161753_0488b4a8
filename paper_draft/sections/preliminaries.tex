@@ -1,0 +1,124 @@
+\section{Preliminaries}
+\label{sec:prelim}
+
+We collect the definitions and standard results used throughout. All random
+variables are discrete with finite support, and all logarithms are base $2$, so
+information is measured in bits. We write $H(\cdot)$ for Shannon entropy,
+$H(\cdot\mid\cdot)$ for conditional entropy, $\II(\cdot\,;\cdot)$ for mutual
+information and $\II(\cdot\,;\cdot\mid\cdot)$ for conditional mutual information, in
+the conventions of \cite{cover2006elements}. We write $X\indep Y\mid Z$ for the
+conditional independence of $X$ and $Y$ given $Z$.
+
+\subsection{The information model}
+
+\begin{definition}[Aligned behavior and pathways]
+\label{def:behavior}
+An \emph{aligned behavior} is a discrete random variable $S$ taking values in a finite
+set $\mathcal{S}$ (for instance a refuse/comply decision, or a quantized
+refusal logit-difference). A \emph{pathway readout} is a random variable
+$R_i=\phi_i(\text{activations})$, a deterministic function of the model's internal
+activations---an attention head, a projection onto a refusal direction, a group of
+sparse-autoencoder latents, or an entire layer. We collect the readouts into the
+vector $R=(R_1,\dots,R_n)$ and write $R_{-i}=(R_j)_{j\neq i}$ and, for $T\subseteq
+\{1,\dots,n\}$, $R_T=(R_i)_{i\in T}$ and $T^c=\{1,\dots,n\}\setminus T$.
+\end{definition}
+
+\begin{definition}[Ablation and information cost]
+\label{def:ablation}
+To \emph{ablate} the set $T$ is to replace $\{R_i\}_{i\in T}$ by a fixed constant
+value, so that the behavior must be read from the surviving readouts $R_{T^c}$. The
+\emph{information cost} of ablating $T$ is
+\[
+  \Delta I_T \;\coloneqq\; \II(S;R) - \II(S;R_{T^c}),
+\]
+the drop in the information that the available readouts carry about $S$. We write
+$\Delta I_i \coloneqq \Delta I_{\{i\}}$ for a single-pathway ablation.
+\end{definition}
+
+\begin{definition}[Conditional redundancy and $k$-redundancy]
+\label{def:redundancy}
+A pathway $R_i$ is \emph{redundant given the rest} if $S\indep R_i\mid R_{-i}$. The
+behavior $S$ is \emph{$k$-redundant} if $\II(S;R_T)=\II(S;R)$ for every $T$ with
+$\lvert T\rvert\ge n-k+1$; that is, every subset of at least $n-k+1$ pathways carries
+all the information $R$ has about $S$.
+\end{definition}
+
+\begin{definition}[Behavioral fidelity]
+\label{def:fidelity}
+Let $\widehat{S}=g(R_{T^c})$ be a decoder of the behavior from the surviving
+readouts, with error probability $P_e\coloneqq\Pr[\widehat{S}\neq S]$. For a
+vector-valued behavior with pre- and post-ablation outputs $b_{\mathrm{pre}},
+b_{\mathrm{post}}$, the \emph{output robustness} is
+$\rho\coloneqq 1-\lVert b_{\mathrm{post}}-b_{\mathrm{pre}}\rVert_2/\lVert
+b_{\mathrm{pre}}\rVert_2$, so that $\rho=1$ means behavior is perfectly preserved.
+\end{definition}
+
+\subsection{The graph model}
+
+\begin{definition}[Computation DAG and pathway redundancy]
+\label{def:dag}
+A \emph{computation DAG} is a directed acyclic graph $G=(V,E)$ with a distinguished
+source $\sigma$ and sink $\tau$. The behavior $S$ is \emph{computable} if at least one
+directed $\sigma\to\tau$ path is intact. The \emph{pathway redundancy} of $G$ is its
+$\sigma$--$\tau$ vertex connectivity,
+\[
+  R(G)\;\coloneqq\;\kappa_{\sigma\tau}(G),
+\]
+the minimum number of internal vertices whose deletion separates $\sigma$ from
+$\tau$.
+\end{definition}
+
+\begin{definition}[The bundle circuit $B(w,d)$]
+\label{def:bundle}
+For integers $w,d\ge 1$, the \emph{bundle circuit} $B(w,d)$ consists of a source
+$\sigma$, a sink $\tau$, and $d$ \emph{bundles} arranged in series, each bundle a set
+of $w$ parallel internal vertices. Consecutive bundles are joined by a complete
+bipartite set of edges, and $\sigma$ (resp.\ $\tau$) is joined to every vertex of the
+first (resp.\ last) bundle. This is the canonical exactly solvable redundant circuit:
+$w$ is its \emph{redundancy width} and $d$ its \emph{depth}.
+\end{definition}
+
+\begin{definition}[Random and targeted ablation thresholds]
+\label{def:thresholds}
+Under \emph{random ablation} each internal vertex is deleted independently with
+probability $q$; the \emph{survival probability} $\Theta(q)$ is the probability that
+$S$ remains computable. Under \emph{targeted ablation} an adversary chooses which
+vertices to delete; the \emph{targeted critical threshold} $t^*(G)$ is the minimum
+number of vertices an adversary must delete to make $S$ non-computable.
+\end{definition}
+
+\subsection{Prerequisite results}
+
+We use the following classical theorems without proof.
+
+\begin{theorem}[Chain rule for mutual information {\cite[Thm.~2.5.2]{cover2006elements}}]
+\label{thm:chainrule}
+For any random variables $S$ and $X=(X_1,X_2)$,
+\[
+  \II(S;X_1,X_2)=\II(S;X_1)+\II(S;X_2\mid X_1).
+\]
+Moreover $\II(S;X_2\mid X_1)\ge 0$, with equality if and only if $S\indep X_2\mid X_1$.
+\end{theorem}
+
+\begin{theorem}[Fano's inequality {\cite[Thm.~2.10.1]{cover2006elements}}]
+\label{thm:fano}
+Let $S\to Y\to\widehat{S}$ be a Markov chain with $S$ taking values in a finite set
+$\mathcal{S}$, and let $P_e=\Pr[\widehat{S}\neq S]$. Writing $H_2(p)=-p\log_2 p-(1-p)\log_2(1-p)$
+for the binary entropy,
+\[
+  H_2(P_e)+P_e\log_2(\lvert\mathcal{S}\rvert-1)\;\ge\;H(S\mid Y).
+\]
+\end{theorem}
+
+\begin{theorem}[Menger's theorem, vertex form {\cite[Thm.~3.3.1]{diestel2017graph}}]
+\label{thm:menger}
+For non-adjacent vertices $\sigma,\tau$ of a graph, the minimum number of vertices
+whose deletion separates $\sigma$ from $\tau$ equals the maximum number of internally
+vertex-disjoint $\sigma$--$\tau$ paths.
+\end{theorem}
+
+We also recall, only as an interpretive cross-check, the partial information
+decomposition of \cite{williams2010pid}: for a target $S$ and two sources $R_1,R_2$,
+the mutual information $\II(S;R_1,R_2)$ decomposes into nonnegative \emph{redundant},
+\emph{unique}, and \emph{synergistic} atoms. We do not use this decomposition in any
+proof; the main bounds rest on Shannon information alone.

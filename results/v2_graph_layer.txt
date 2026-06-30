@@ -1,0 +1,44 @@
+======================================================================
+Theorem C1: targeted threshold == minimum vertex cut R(G) == w
+======================================================================
+  B(w=3,d=4): R(G)=nx.min_node_cut=3 | delete 1 bundle(w=3) disconnects=True | delete w-1 disconnects=False  -> t*(G)=3
+  B(w=5,d=3): R(G)=nx.min_node_cut=5 | delete 1 bundle(w=5) disconnects=True | delete w-1 disconnects=False  -> t*(G)=5
+  B(w=2,d=6): R(G)=nx.min_node_cut=2 | delete 1 bundle(w=2) disconnects=True | delete w-1 disconnects=False  -> t*(G)=2
+  B(w=4,d=5): R(G)=nx.min_node_cut=4 | delete 1 bundle(w=4) disconnects=True | delete w-1 disconnects=False  -> t*(G)=4
+  PASS: t*(G) = R(G) = w exactly (targeted attack needs exactly one bundle).
+
+======================================================================
+Theorem C2: random survival Theta(q) == (1 - q^w)^d   (Monte-Carlo)
+======================================================================
+  B(w=3,d=4):   q     MC_survival   theory     |diff|   in95%CI
+            0.10    0.9962      0.9960    0.0002   True
+            0.30    0.8949      0.8963    0.0014   True
+            0.50    0.5846      0.5862    0.0016   True
+            0.70    0.1842      0.1863    0.0021   True
+            0.90    0.0061      0.0054    0.0007   True
+  B(w=5,d=3):   q     MC_survival   theory     |diff|   in95%CI
+            0.10    1.0000      1.0000    0.0000   True
+            0.30    0.9930      0.9927    0.0003   True
+            0.50    0.9075      0.9091    0.0017   True
+            0.70    0.5764      0.5758    0.0006   True
+            0.90    0.0720      0.0687    0.0033   True
+  B(w=4,d=5):   q     MC_survival   theory     |diff|   in95%CI
+            0.10    0.9995      0.9995    0.0000   True
+            0.30    0.9610      0.9602    0.0008   True
+            0.50    0.7235      0.7242    0.0007   True
+            0.70    0.2532      0.2534    0.0002   True
+            0.90    0.0047      0.0048    0.0001   True
+  PASS: max |MC - theory| = 0.0033 (all within 95% CI).
+
+======================================================================
+Theorem C3: random vs targeted separation & phase-transition sharpening
+======================================================================
+  targeted critical COUNT = w;  random critical count = q_c(w,d)*w*d
+  d=8:   w    q_c(Theta=1/2)   random_count=q_c*w*d   targeted_count=w   ratio
+          2    0.2881             4.61                2         2.30
+          4    0.5367            17.18                4         4.29
+          8    0.7326            46.89                8         5.86
+         16    0.8559           109.56               16         6.85
+  PASS: random critical count exceeds targeted (=w) and grows; transition width shrinks as w increases (sharpening).
+
+ALL GRAPH-LAYER CHECKS PASSED.

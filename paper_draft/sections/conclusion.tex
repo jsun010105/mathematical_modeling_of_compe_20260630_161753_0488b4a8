@@ -1,0 +1,35 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We have given a self-contained mathematical framework for the compensatory robustness
+of aligned behavior in language models, and answered the motivating question
+affirmatively but with a precise caveat. On the information side, the cost of ablating
+a pathway is exactly its non-redundant conditional mutual information
+$\II(S;R_i\mid R_{-i})$ (Theorem~\ref{thm:a1}), fully redundant pathways cost nothing,
+$k$-redundancy buys resilience to any $k-1$ ablations (Theorem~\ref{thm:a2}), and Fano's
+inequality turns this information loss into a provable floor on behavioral error
+(Theorem~\ref{thm:b1}); when behavior survives, the surviving pathways must already have
+carried the signal, so compensation reveals rather than creates redundancy
+(Proposition~\ref{prop:d1}). On the graph side, the targeted critical threshold equals
+the minimum vertex cut $R(G)$ (Theorem~\ref{thm:c1}), random survival obeys the exact
+law $(1-q^w)^d$ (Theorem~\ref{thm:c2}), and the two thresholds are exponentially
+separated by a percolation phase transition whose critical point tends to one and whose
+width shrinks like $1/w$ (Theorem~\ref{thm:c3}).
+
+The key takeaway is that a single aligned circuit can be robust to random damage and
+fragile to a targeted attack at the same time, because these are governed by two
+different invariants---the percolation threshold $q_c$ and the min-cut $R(G)$. This
+dissolves the apparent contradiction between the field's fragile and distributed
+reports, and shows that the premise of intrinsic robustness holds only in the
+random/benign regime: a targeted adversary needs to degrade just $R(G)$ pathway-units
+(Corollary~\ref{cor:e1}), which is cheap when alignment is shallow. Every nontrivial
+claim was confirmed computationally---the ablation identity to machine precision, the
+Fano floor without violation, the targeted threshold exactly equal to $R(G)$, and the
+random survival law within Monte-Carlo confidence intervals.
+
+Future work should lift the combinatorial idealization to analog-threshold
+percolation, model how the alignment min-cut $R(G)$ evolves under adversarial and
+continued training, and estimate the bounds on real transformers with redundancy-aware
+estimators of conditional mutual information. Each of these would move the framework
+from a synthetic-verification contribution toward a practical diagnostic of which kind
+of robustness a deployed model's safety actually has.

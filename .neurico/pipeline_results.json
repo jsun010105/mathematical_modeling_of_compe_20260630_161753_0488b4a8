@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "stages": {
+    "resource_finder": {
+      "success": true,
+      "completion_marker": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8/.resource_finder_complete",
+      "outputs": {
+        "literature_review": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8/literature_review.md",
+        "resources_catalog": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8/resources.md",
+        "papers_dir": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8/papers",
+        "code_dir": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8/code"
+      },
+      "log_file": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8/logs/resource_finder_claude.log",
+      "transcript_file": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8/logs/resource_finder_claude_transcript.jsonl",
+      "elapsed_time": 699.04634141922
+    },
+    "experiment_runner": {
+      "success": true,
+      "return_code": 0,
+      "elapsed_time": 863.9254722595215,
+      "log_file": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8/logs/execution_claude.log",
+      "transcript_file": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8/logs/execution_claude_transcript.jsonl"
+    }
+  },
+  "work_dir": "/workspaces/mathematical_modeling_of_compe_20260630_161753_0488b4a8"
+}

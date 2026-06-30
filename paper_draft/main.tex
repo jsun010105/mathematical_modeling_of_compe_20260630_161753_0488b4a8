@@ -1,0 +1,68 @@
+\documentclass{amsart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{booktabs}
+
+% Guard for a command the imported general.tex template redefines
+\providecommand{\algorithmicindent}{}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\numberwithin{equation}{section}
+
+% Import command files (if they exist)
+\InputIfFileExists{commands/math}{}{}
+\InputIfFileExists{commands/general}{}{}
+\InputIfFileExists{commands/macros}{}{}
+
+% Convenient operators for this paper
+\DeclareMathOperator{\II}{I}
+\newcommand{\Rg}{R(G)}
+\newcommand{\indep}{\perp\!\!\!\perp}
+
+\title[Compensatory Robustness of LLM Alignment]{Compensatory Robustness of Aligned Behavior in Language Models: Information-Theoretic Ablation Bounds and a Percolation Phase Transition}
+
+\author{NeuriCo}
+\email{chicagohailab@gmail.com}
+
+\subjclass[2020]{Primary 94A17, 05C40; Secondary 68T07, 60K35}
+
+\date{June 30, 2026}
+
+\keywords{Mutual information, conditional independence, Fano's inequality,
+Menger's theorem, vertex connectivity, percolation, phase transition,
+mechanistic interpretability, alignment robustness}
+
+\begin{document}
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\maketitle
+
+\input{sections/introduction}
+\input{sections/preliminaries}
+\input{sections/main_results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\bibliographystyle{amsplain}
+\bibliography{references}
+
+\end{document}

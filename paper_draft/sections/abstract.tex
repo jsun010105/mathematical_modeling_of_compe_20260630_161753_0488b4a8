@@ -1,0 +1,22 @@
+The empirical study of language-model alignment reports two seemingly
+contradictory facts: aligned behavior is at once \emph{fragile}---removable by a
+handful of gradient steps, concentrated in the first output tokens, or carried by
+a single activation direction---and \emph{distributed}, surviving the ablation of
+individual heads, directions, or pathways. We give a self-contained mathematical
+framework in which both facts are theorems about the same object. Modeling an
+aligned behavior as a discrete random variable $S$ read off from internal pathways
+$R_1,\dots,R_n$, we prove that the information lost by ablating a pathway equals its
+non-redundant conditional mutual information $\II(S;R_i\mid R_{-i})$; fully redundant
+pathways cost exactly zero. Via Fano's inequality this information loss lower-bounds
+the unavoidable behavioral error after ablation, turning redundancy into a provable
+robustness guarantee. Modeling computation as a layered directed acyclic graph, we
+show that the \emph{targeted} critical ablation threshold equals the minimum vertex
+cut $R(G)$ (Menger's theorem), while the \emph{random} threshold obeys an exact
+percolation law $(1-q^w)^d$ whose critical point $q_c=(1-2^{-1/d})^{1/w}\to 1$ is
+exponentially separated from the targeted threshold in the redundancy width $w$.
+A single network is therefore simultaneously robust to random damage and fragile to
+a targeted attack on its min-cut, which dissolves the apparent contradiction in the
+literature. Every nontrivial claim is verified computationally: the information
+identity holds to machine precision, the Fano floor is never violated, the targeted
+threshold equals $R(G)$ exactly, and the random survival law matches Monte-Carlo
+estimates within $95\%$ confidence intervals.
